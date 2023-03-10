@@ -314,3 +314,41 @@ TEST_F(TemperatureControl_tests, TemperatureChangingInRuntime)
 
     ASSERT_EQ(current_room_temperature, 19);
 }
+
+TEST_F(TemperatureControl_tests, TestIterfaceInputs)
+ {
+    constexpr Celsius InitialMin{15};
+    constexpr Celsius InitialMax{19};
+
+    // Simulate input sensor readout
+    Celsius current_room_temperature{17};
+
+    TemperatureControl temperatureControl(
+        inputSensorMock,
+        outputControlMock,
+        InitialMin,
+        InitialMax);
+
+    ASSERT_EQ(temperatureControl.ChangeMax(20), true);
+    ASSERT_EQ(temperatureControl.ChangeMax(19), true);
+
+    // out of valid range: SYSTEM_MIN_TEMP >= n <= SYSTEM_MAX_TEMP
+    ASSERT_EQ(temperatureControl.ChangeMax(777), false);
+
+    ASSERT_EQ(temperatureControl.ChangeMin(10), true);
+    ASSERT_EQ(temperatureControl.ChangeMin(14), true);
+
+    // out of valid range: SYSTEM_MIN_TEMP >= n <= SYSTEM_MAX_TEMP
+    ASSERT_EQ(temperatureControl.ChangeMin(-777), false);
+
+    // change MIN == MAX
+    ASSERT_EQ(temperatureControl.ChangeMin(19), true);
+
+    ASSERT_EQ(temperatureControl.ChangeMax(21), true);
+
+    // change MIN to be bigger than MAX
+    ASSERT_EQ(temperatureControl.ChangeMin(24), false);
+
+    // change MAX to be smaller than MIN
+    ASSERT_EQ(temperatureControl.ChangeMax(10), false);
+}

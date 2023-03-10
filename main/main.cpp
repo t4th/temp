@@ -52,7 +52,7 @@ int main()
         InitialMax
     );
 
-    std::cout << "press '+' to increse temp and '-' to decrease, 'enter' normal run" << std::endl;
+    std::cout << "press '+' to increse temp, '-' to decrease temp, <empty> - normal run, 'q' - quit" << std::endl;
     
     bool exit{false};
 

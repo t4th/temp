@@ -3,6 +3,8 @@
 
 #include "TemperatureControl.h"
 
+// module/project global
+// can also be put as parameter
 constexpr Celsius SYSTEM_MAX_TEMP{25};
 constexpr Celsius SYSTEM_MIN_TEMP{10};
 
@@ -13,8 +15,18 @@ TemperatureControl::TemperatureControl(
     Celsius MaxTemp
 ) : mInput{input}, mOutput{output}, mMinTemp{}, mMaxTemp{}
 {
-    mMinTemp = (MinTemp < SYSTEM_MIN_TEMP)?SYSTEM_MIN_TEMP:MinTemp;
-    mMaxTemp = (MaxTemp > SYSTEM_MAX_TEMP)?SYSTEM_MAX_TEMP:MaxTemp;
+    // On invalid parameters use default settings.
+    // it would be nicer to be done as an assert.
+    if (MinTemp <= MaxTemp)
+    {
+        mMinTemp = (MinTemp < SYSTEM_MIN_TEMP)?SYSTEM_MIN_TEMP:MinTemp;
+        mMaxTemp = (MaxTemp > SYSTEM_MAX_TEMP)?SYSTEM_MAX_TEMP:MaxTemp;
+    }
+    else
+    {
+        mMinTemp = SYSTEM_MIN_TEMP;
+        mMaxTemp = SYSTEM_MAX_TEMP;
+    }
 }
 
 void TemperatureControl::Run()
@@ -64,7 +76,14 @@ void TemperatureControl::Run()
 
 bool TemperatureControl::ChangeMin(const Celsius NewMin)
 {
+    // Check range.
     if ((NewMin < SYSTEM_MIN_TEMP) || (NewMin > SYSTEM_MAX_TEMP))
+    {
+        return false;
+    }
+
+    // Be sure Min is never bigger than Max.
+    if (NewMin > mMaxTemp)
     {
         return false;
     }
@@ -76,7 +95,14 @@ bool TemperatureControl::ChangeMin(const Celsius NewMin)
 
 bool TemperatureControl::ChangeMax(const Celsius NewMax)
 {
+    // Check range.
     if ((NewMax < SYSTEM_MIN_TEMP) || (NewMax > SYSTEM_MAX_TEMP))
+    {
+        return false;
+    }
+
+    // Be sure Max is never smaller than Min.
+    if (NewMax < mMinTemp)
     {
         return false;
     }
