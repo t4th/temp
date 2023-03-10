@@ -1,4 +1,4 @@
-﻿// Seome 'generic' Temperature control.
+﻿// 'generic' Temperature control.
 #pragma once
 
 typedef int Celsius;
@@ -31,12 +31,8 @@ public:
         Celsius MaxTemp
     );
     
-    // Run the logic itself.
-    // You want to call this function as often the precision
-    // is required.
-    // 
-    // Timing of the control can also be implemented withing
-    // this class.
+    // Run the logic.
+    // Rate is dependant on precison and hardware sensor/control used.
     void Run();
 
     bool ChangeMin(const Celsius NewMin);
